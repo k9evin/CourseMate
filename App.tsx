@@ -17,6 +17,7 @@ import {
   MessageInput,
 } from "stream-chat-expo";
 import { Text } from "react-native";
+import AuthContext from "./src/contexts/AuthContext";
 
 const API_KEY = "q6sd75ec9awk";
 const client = StreamChat.getInstance(API_KEY);
@@ -24,64 +25,45 @@ const client = StreamChat.getInstance(API_KEY);
 export default function App() {
   const isLoadingComplete = useCachedResources();
   const colorScheme = useColorScheme();
-  const [isReady, setIsReady] = useState(false);
-  const [selectedChannel, setSelectedChannel] = useState(null);
-
-  const connectUser = async () => {
-    // Create a new user object
-    await client.connectUser(
-      {
-        id: "kevin",
-        name: "Kevin",
-        image:
-          "https://pbs.twimg.com/profile_images/1490533817416925189/oDKK6UFj_400x400.jpg",
-      },
-      client.devToken("kevin")
-    );
-    setIsReady(true);
-
-    // Create a channel
-    // const channel = client.channel("team", "help", {
-    //     name: "Help",
-    // });
-    // await channel.create();
-  };
 
   useEffect(() => {
-    connectUser();
+    // when component mounts
+
+    return () => {
+      // when component unmounts
+      client.disconnectUser();
+    };
   }, []);
 
-  const onChannelSelect = (channel) => {
-    setSelectedChannel(channel);
-  };
-
-  if (!isLoadingComplete || !isReady) {
+  if (!isLoadingComplete) {
     return null;
   } else {
     return (
       <SafeAreaProvider>
-        <OverlayProvider>
-          <Chat client={client}>
-            {/* <Navigation colorScheme={colorScheme} /> */}
-            {!selectedChannel ? (
-              <ChannelList onSelect={onChannelSelect} />
-            ) : (
-              <>
-                <Channel channel={selectedChannel}>
-                  <Text
-                    style={{ margin: 50 }}
-                    onPress={() => setSelectedChannel(null)}
-                  >
-                    Go Back
-                  </Text>
-                    <MessageList />
-                    <MessageInput /> 
-                </Channel>
-              </>
-            )}
-          </Chat>
-        </OverlayProvider>
-        <StatusBar />
+        <AuthContext>
+          <OverlayProvider>
+            <Chat client={client}>
+              <Navigation colorScheme={colorScheme} />
+              {/* {!selectedChannel ? (
+                <ChannelList onSelect={onChannelSelect} />
+              ) : (
+                <>
+                  <Channel channel={selectedChannel}>
+                    <Text
+                      style={{ margin: 50 }}
+                      onPress={() => setSelectedChannel(null)}
+                    >
+                      Go Back
+                    </Text>
+                      <MessageList />
+                      <MessageInput /> 
+                  </Channel>
+                </>
+              )} */}
+            </Chat>
+          </OverlayProvider>
+        </AuthContext>
+        <StatusBar style="light" />
       </SafeAreaProvider>
     );
   }
