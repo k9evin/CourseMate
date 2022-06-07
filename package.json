@@ -47,7 +47,7 @@
     "react-native-svg": "12.3.0",
     "react-native-web": "0.17.7",
     "stream-chat-expo": "^4.6.1",
-    "webpack-dev-server": "~3.11.0"
+    "webpack-dev-server": "~4.9.2"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",
